@@ -1,0 +1,16 @@
+{
+    "name": "video-server",
+    "version": "1.0.0",
+    "description": "a simple nodejs video server",
+    "main": "index.js",
+    "repository": "https://github.com/brotholopithicus/video-server.git",
+    "author": "James Jarvis",
+    "engines": {
+        "node": "7.6.0"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "license": "MIT"
+}
