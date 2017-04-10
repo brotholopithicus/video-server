@@ -24,46 +24,28 @@ function readFile(file) {
 }
 
 async function requestHandler(req, res) {
-    requestLogger(req);
-    switch (req.url) {
-        case '/video':
-            try {
-                const html = await readFile(__dirname + '/index.html');
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.write(html);
-                res.end();
-            } catch (err) {
-                return errorHandler(err, req, res);
-            }
-            break;
-        case '/style.css':
-            try {
-                const css = await readFile(__dirname + '/public/style.css');
-                res.writeHead(200, { 'Content-Type': 'text/css' });
-                res.write(css);
-                res.end();
-            } catch (err) {
-                return errorHandler(err, req, res);
-            }
-            break;
-        case '/app.js':
-            try {
-                const js = await readFile(__dirname + '/public/app.js');
-                res.writeHead(200, { 'Content-Type': 'text/javascript' });
-                res.write(js);
-                res.end();
-            } catch (err) {
-                return errorHandler(err, req, res);
-            }
-            break;
-        case '/video.mp4':
-            videoHandler(req, res);
-            break;
-        default:
+    if (req.url === '/video.mp4') {
+        return videoHandler(req, res);
+    } else if (req.url === '/') {
+        try {
+            const html = await readFile(__dirname + '/index.html');
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write(`<h1><a href='/video'>Hello Friend</a></h1>`);
+            res.write(html);
             res.end();
-            break;
+        } catch (err) {
+            return errorHandler(err, req, res);
+        }
+    } else {
+        try {
+            const filePath = `${__dirname}/public${req.url}`;
+            const fileType = path.extname(filePath).substr(1);
+            const file = await readFile(filePath);
+            res.writeHead(200, { 'Content-Type': `text/${fileType}` })
+            res.write(file);
+            res.end();
+        } catch (err) {
+            return errorHandler(err, req, res);
+        }
     }
 }
 
@@ -100,10 +82,6 @@ async function videoHandler(req, res) {
     } catch (err) {
         return errorHandler(err, req, res);
     }
-}
-
-function requestLogger(req) {
-    console.log(req.url);
 }
 
 function errorHandler(err, req, res) {

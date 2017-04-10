@@ -40,7 +40,6 @@ function handleProgressUpdate() {
 
 function scrub(e) {
     video.currentTime = (e.offsetX / progress.offsetWidth) * video.duration;
-    handleProgressUpdate();
 }
 
 video.addEventListener('click', togglePlay);
