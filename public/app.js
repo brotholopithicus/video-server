@@ -4,6 +4,8 @@ const progress = player.querySelector('.progress');
 const progressBar = player.querySelector('.progress-filled');
 const toggle = player.querySelector('.toggle');
 const fullscreen = player.querySelector('.fullscreen');
+const volume = player.querySelector('.volume-toggle');
+const volumeRange = player.querySelector(`input[name='volume']`);
 
 const skipButtons = player.querySelectorAll('button[data-skip]');
 const ranges = player.querySelectorAll(`input[type='range']`);
@@ -18,6 +20,23 @@ function toggleFullscreen(e) {
     } else {
         player.webkitRequestFullscreen();
     }
+}
+
+function updateVolumeRange(level) {
+    volumeRange.value = level;
+}
+
+function toggleVolume() {
+    if (this.dataset.level === 'full') {
+        this.dataset.level = 'mute';
+        this.innerHTML = '&#128263;';
+        video.volume = 0;
+    } else {
+        this.dataset.level = 'full';
+        this.innerHTML = '&#128266;';
+        video.volume = 1;
+    }
+    updateVolumeRange(video.volume);
 }
 
 function updateButton() {
@@ -49,6 +68,7 @@ video.addEventListener('timeupdate', handleProgressUpdate);
 
 toggle.addEventListener('click', togglePlay);
 fullscreen.addEventListener('click', toggleFullscreen);
+volume.addEventListener('click', toggleVolume);
 
 skipButtons.forEach(button => button.addEventListener('click', skip));
 ranges.forEach(range => range.addEventListener('change', handleRangeUpdate));
