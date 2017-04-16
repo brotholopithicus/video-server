@@ -23,10 +23,14 @@ function readFile(file) {
     });
 }
 
+function requestLogger(req) {
+    const parsedUrl = req.url.substr(1).split('/');
+    console.log({ parsedUrl });
+    console.log(req.url);
+}
+
 async function requestHandler(req, res) {
-    if (req.url === '/video.mp4') {
-        return videoHandler(req, res);
-    } else if (req.url === '/') {
+    if (req.url === '/') {
         try {
             const html = await readFile(__dirname + '/index.html');
             res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -35,6 +39,8 @@ async function requestHandler(req, res) {
         } catch (err) {
             return errorHandler(err, req, res);
         }
+    } else if (req.url.substr(1).split('/')[0] === 'videos') {
+        return videoHandler(req, res);
     } else {
         try {
             const filePath = `${__dirname}/public${req.url}`;
@@ -52,7 +58,7 @@ async function requestHandler(req, res) {
 async function videoHandler(req, res) {
     try {
         let stream;
-        const file = path.join(__dirname, req.url);
+        const file = path.join(__dirname, 'public', req.url);
         const total = await getFileSize(file);
         if (req.headers['range']) {
             const range = req.headers.range;
